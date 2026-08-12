@@ -1,0 +1,61 @@
+// ComicWeb — Sprint 1 database schema
+// Postgres: metadata only. Comic page images live on Cloudflare R2 (image_url).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// Đầu truyện
+model Manga {
+  id          String   @id @default(uuid()) @db.Uuid
+  title       String   @db.VarChar(255)
+  slug        String   @unique @db.VarChar(255)
+  coverImage  String   @map("cover_image") // R2 public URL
+  description String?  @db.Text
+  isNsfw      Boolean  @default(true) @map("is_nsfw")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  chapters Chapter[]
+
+  @@index([createdAt])
+  @@map("mangas")
+}
+
+/// Chương truyện (content locking + Shopee affiliate)
+model Chapter {
+  id                  String   @id @default(uuid()) @db.Uuid
+  mangaId             String   @map("manga_id") @db.Uuid
+  chapterNumber       Float    @map("chapter_number")
+  isLocked            Boolean  @default(true) @map("is_locked")
+  /// Mật khẩu mở khóa — khớp keyword giấu trên Shopee. Null nếu is_locked = false.
+  password            String?  @db.VarChar(255)
+  shopeeAffiliateLink String?  @map("shopee_affiliate_link") @db.Text
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  manga  Manga   @relation(fields: [mangaId], references: [id], onDelete: Cascade)
+  images Image[]
+
+  @@unique([mangaId, chapterNumber])
+  @@index([mangaId])
+  @@map("chapters")
+}
+
+/// Ảnh trong chương — chỉ lưu URL trỏ R2/CDN, không lưu file trong Postgres/Supabase Storage
+model Image {
+  id         String @id @default(uuid()) @db.Uuid
+  chapterId  String @map("chapter_id") @db.Uuid
+  imageUrl   String @map("image_url") @db.Text
+  orderIndex Int    @map("order_index")
+
+  chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  @@unique([chapterId, orderIndex])
+  @@index([chapterId])
+  @@map("images")
+}
