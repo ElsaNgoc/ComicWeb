@@ -8,7 +8,56 @@ export type ThemeConfig = {
   purple?: string;
   ribbon?: string;
   woodMid?: string;
+  fontBody?: string;
+  fontDisplay?: string;
 };
+
+export type FontOption = {
+  id: string;
+  label: string;
+  cssFamily: string;
+  google: string;
+};
+
+/** Chỉ font Google có subset tiếng Việt (đủ ă â ê ô ơ ư + dấu thanh). */
+export const FONT_BODY_OPTIONS: FontOption[] = [
+  { id: "be-vietnam-pro", label: "Be Vietnam Pro (chuẩn tiếng Việt)", cssFamily: '"Be Vietnam Pro", sans-serif', google: "Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400" },
+  { id: "lora", label: "Lora (serif mềm · mặc định)", cssFamily: '"Lora", serif', google: "Lora:ital,wght@0,400;0,500;0,600;1,400" },
+  { id: "source-serif-4", label: "Source Serif 4", cssFamily: '"Source Serif 4", serif', google: "Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600" },
+  { id: "literata", label: "Literata", cssFamily: '"Literata", serif', google: "Literata:opsz,wght@7..72,400;7..72,500;7..72,600" },
+  { id: "crimson-pro", label: "Crimson Pro", cssFamily: '"Crimson Pro", serif', google: "Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400" },
+  { id: "eb-garamond", label: "EB Garamond", cssFamily: '"EB Garamond", serif', google: "EB+Garamond:ital,wght@0,400;0,500;0,600;1,400" },
+  { id: "merriweather", label: "Merriweather", cssFamily: '"Merriweather", serif', google: "Merriweather:ital,wght@0,400;0,700;1,400" },
+  { id: "nunito", label: "Nunito (sans mềm)", cssFamily: '"Nunito", sans-serif', google: "Nunito:ital,wght@0,400;0,500;0,600;0,700;1,400" },
+  { id: "noto-serif", label: "Noto Serif", cssFamily: '"Noto Serif", serif', google: "Noto+Serif:ital,wght@0,400;0,500;0,600;1,400" },
+  { id: "noto-sans", label: "Noto Sans", cssFamily: '"Noto Sans", sans-serif', google: "Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400" },
+];
+
+export const FONT_DISPLAY_OPTIONS: FontOption[] = [
+  { id: "cormorant-garamond", label: "Cormorant Garamond (cổ trang · mặc định)", cssFamily: '"Cormorant Garamond", serif', google: "Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500" },
+  { id: "eb-garamond", label: "EB Garamond", cssFamily: '"EB Garamond", serif', google: "EB+Garamond:ital,wght@0,500;0,600;0,700;1,500" },
+  { id: "fraunces", label: "Fraunces", cssFamily: '"Fraunces", serif', google: "Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500" },
+  { id: "literata", label: "Literata", cssFamily: '"Literata", serif', google: "Literata:opsz,wght@7..72,500;7..72,600;7..72,700" },
+  { id: "lora", label: "Lora", cssFamily: '"Lora", serif', google: "Lora:wght@500;600;700" },
+  { id: "source-serif-4", label: "Source Serif 4", cssFamily: '"Source Serif 4", serif', google: "Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700" },
+  { id: "be-vietnam-pro", label: "Be Vietnam Pro", cssFamily: '"Be Vietnam Pro", sans-serif', google: "Be+Vietnam+Pro:wght@500;600;700" },
+  { id: "crimson-pro", label: "Crimson Pro", cssFamily: '"Crimson Pro", serif', google: "Crimson+Pro:wght@500;600;700" },
+];
+
+export function getFontOption(list: FontOption[], id: string | undefined, fallbackId: string) {
+  return list.find((f) => f.id === id) ?? list.find((f) => f.id === fallbackId) ?? list[0];
+}
+
+export function googleFontsHref(theme: ThemeConfig | null) {
+  const t = { ...DEFAULT_THEME, ...theme };
+  const body = getFontOption(FONT_BODY_OPTIONS, t.fontBody, "lora");
+  const display = getFontOption(FONT_DISPLAY_OPTIONS, t.fontDisplay, "cormorant-garamond");
+  const families = [body.google, display.google]
+    .filter((v, i, arr) => arr.indexOf(v) === i)
+    .map((f) => `family=${f}`)
+    .join("&");
+  return `https://fonts.googleapis.com/css2?${families}&display=swap`;
+}
 
 export type LayoutBlock = {
   id: string;
@@ -51,6 +100,8 @@ export const DEFAULT_THEME: ThemeConfig = {
   purple: "#f8a181",
   ribbon: "#7a4f42",
   woodMid: "#fad1c5",
+  fontBody: "lora",
+  fontDisplay: "cormorant-garamond",
 };
 
 export const DEFAULT_LAYOUT: LayoutConfig = {
@@ -114,6 +165,8 @@ export function hasSidebarContent(settings: SiteSettingsData | null) {
 
 export function themeToCssVars(theme: ThemeConfig | null): Record<string, string> {
   const t = { ...DEFAULT_THEME, ...theme };
+  const body = getFontOption(FONT_BODY_OPTIONS, t.fontBody, "lora");
+  const display = getFontOption(FONT_DISPLAY_OPTIONS, t.fontDisplay, "cormorant-garamond");
   return {
     "--background": t.background!,
     "--foreground": t.foreground!,
@@ -132,5 +185,7 @@ export function themeToCssVars(theme: ThemeConfig | null): Record<string, string
     "--peach-warm": t.purple!,
     "--peach-deep": t.accent!,
     "--wood-mid": t.woodMid!,
+    "--font-body": body.cssFamily,
+    "--font-display": display.cssFamily,
   };
 }

@@ -1,19 +1,26 @@
-import type { CSSProperties } from "react";
-import { themeToCssVars, type SiteSettingsData } from "@/lib/site-settings-shared";
+import {
+  googleFontsHref,
+  themeToCssVars,
+  type SiteSettingsData,
+} from "@/lib/site-settings-shared";
 
 export function SiteTheme({ settings }: { settings: SiteSettingsData | null }) {
-  const vars = themeToCssVars(settings?.themeConfig ?? null);
-  return (
-    <style
-      dangerouslySetInnerHTML={{
-        __html: `:root { ${Object.entries(vars)
-          .map(([k, v]) => `${k}: ${v}`)
-          .join("; ")} }`,
-      }}
-    />
-  );
-}
+  const theme = settings?.themeConfig ?? null;
+  const vars = themeToCssVars(theme);
+  const fontHref = googleFontsHref(theme);
 
-export function themeStyle(settings: SiteSettingsData | null): CSSProperties {
-  return themeToCssVars(settings?.themeConfig ?? null) as CSSProperties;
+  return (
+    <>
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+      <link href={fontHref} rel="stylesheet" />
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `:root { ${Object.entries(vars)
+            .map(([k, v]) => `${k}: ${v}`)
+            .join("; ")} }`,
+        }}
+      />
+    </>
+  );
 }
