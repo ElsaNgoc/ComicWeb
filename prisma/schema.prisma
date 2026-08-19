@@ -17,14 +17,37 @@ model Manga {
   slug        String   @unique @db.VarChar(255)
   coverImage  String   @map("cover_image") // R2 public URL
   description String?  @db.Text
-  isNsfw      Boolean  @default(true) @map("is_nsfw")
+  isNsfw      Boolean  @default(false) @map("is_nsfw")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   chapters Chapter[]
+  tags     MangaTag[]
 
   @@index([createdAt])
   @@map("mangas")
+}
+
+/// Thể loại / tag truyện
+model Tag {
+  id   String @id @default(uuid()) @db.Uuid
+  name String @db.VarChar(100)
+  slug String @unique @db.VarChar(100)
+
+  mangas MangaTag[]
+
+  @@map("tags")
+}
+
+model MangaTag {
+  mangaId String @map("manga_id") @db.Uuid
+  tagId   String @map("tag_id") @db.Uuid
+
+  manga Manga @relation(fields: [mangaId], references: [id], onDelete: Cascade)
+  tag   Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([mangaId, tagId])
+  @@map("manga_tags")
 }
 
 /// Chương truyện (content locking + Shopee affiliate)
@@ -58,4 +81,28 @@ model Image {
   @@unique([chapterId, orderIndex])
   @@index([chapterId])
   @@map("images")
+}
+
+/// Nội dung giao diện blog — admin chỉnh, user chỉ xem khi có text
+model SiteSettings {
+  id                  String   @id @default("default")
+  siteName            String   @default("Xà Động") @map("site_name") @db.VarChar(255)
+  tagline             String?  @db.Text
+  bannerTitle         String?  @map("banner_title") @db.Text
+  bannerSubtitle      String?  @map("banner_subtitle") @db.Text
+  bannerImage         String?  @map("banner_image") @db.Text
+  welcomeTitle        String?  @map("welcome_title") @db.Text
+  welcomeText         String?  @map("welcome_text") @db.Text
+  sidebarQuote        String?  @map("sidebar_quote") @db.Text
+  sidebarIntro        String?  @map("sidebar_intro") @db.Text
+  sidebarCornerTitle  String?  @map("sidebar_corner_title") @db.Text
+  sidebarCornerCaption String? @map("sidebar_corner_caption") @db.Text
+  sidebarNotesTitle   String?  @map("sidebar_notes_title") @db.Text
+  sidebarNotes        String?  @map("sidebar_notes") @db.Text
+  footerText          String?  @map("footer_text") @db.Text
+  themeConfig         Json?    @map("theme_config")
+  layoutConfig        Json?    @map("layout_config")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  @@map("site_settings")
 }

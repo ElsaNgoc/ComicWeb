@@ -1,26 +1,188 @@
 @import "tailwindcss";
 
+/* Palette — sampled from theme/watercolor-bg.png (peach watercolor) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --peach-light: #fff5f0;
+  --peach-soft: #fad1c5;
+  --peach-mid: #ffd4b2;
+  --peach-warm: #f8a181;
+  --peach-deep: #e88e75;
+
+  --coral: var(--peach-deep);
+  --pink: var(--peach-soft);
+  --purple: var(--peach-warm);
+  --peri: var(--peach-mid);
+  --peri-soft: var(--peach-mid);
+
+  --paper: #fff8f4;
+  --ink: #5c4033;
+  --ink-soft: #8a7062;
+  --link: #c96b52;
+  --ribbon: #7a4f42;
+
+  --background: var(--peach-light);
+  --foreground: var(--ink);
+  --muted: var(--ink-soft);
+  --surface: #fffaf6;
+  --border: rgba(122, 79, 66, 0.14);
+  --accent: var(--peach-deep);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-muted: var(--muted);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-coral: var(--coral);
+  --color-pink: var(--pink);
+  --color-purple: var(--purple);
+  --color-peri: var(--peri);
+  --color-peri-soft: var(--peri-soft);
+  --color-link: var(--link);
+  --color-ribbon: var(--ribbon);
+  --color-paper: var(--paper);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
 }
 
 body {
-  background: var(--background);
+  min-height: 100%;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), "Times New Roman", serif;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.65;
+  background-color: var(--peach-soft);
+  background-image: url("/theme/watercolor-bg.png");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.font-display {
+  font-family: var(--font-display), var(--font-body), Georgia, serif;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.blog-shell {
+  width: min(920px, calc(100% - 1.25rem));
+  margin: 1.25rem auto 2.5rem;
+  background: color-mix(in srgb, var(--paper) 94%, transparent);
+  backdrop-filter: blur(2px);
+  border: 1px solid color-mix(in srgb, var(--peach-warm) 35%, transparent);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.65) inset,
+    0 20px 48px -24px rgba(122, 79, 66, 0.28);
+  position: relative;
+}
+
+.blog-shell::before,
+.blog-shell::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 14px;
+  pointer-events: none;
+  opacity: 0.85;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--peach-warm) 25%, transparent),
+    transparent
+  );
+}
+
+.blog-shell::before {
+  top: 0;
+}
+
+.blog-shell::after {
+  bottom: 0;
+}
+
+.nav-ribbon {
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--ribbon) 92%, #fff) 0%,
+    var(--ribbon) 100%
+  );
+  color: #fff8f4;
+  clip-path: polygon(
+    14px 0,
+    calc(100% - 14px) 0,
+    100% 50%,
+    calc(100% - 14px) 100%,
+    14px 100%,
+    0 50%
+  );
+}
+
+.nav-ribbon a {
+  color: #fff8f4;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+  font-weight: 500;
+  font-family: var(--font-display), serif;
+  text-transform: uppercase;
+}
+
+.nav-ribbon a:hover {
+  color: var(--peach-mid);
+}
+
+.banner-scroll {
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--peach-soft) 80%, #fff) 0%,
+    var(--paper) 42%,
+    color-mix(in srgb, var(--peach-mid) 55%, #fff) 100%
+  );
+}
+
+.wavy-rule {
+  border: 0;
+  height: 1px;
+  background: transparent;
+  text-align: center;
+  overflow: hidden;
+}
+
+.wavy-rule::before {
+  content: "· · · ✦ · · ·";
+  letter-spacing: 0.35em;
+  font-size: 0.75rem;
+  color: color-mix(in srgb, var(--peach-deep) 55%, var(--muted));
+}
+
+.link-soft {
+  color: var(--link);
+}
+
+.link-soft:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.5s ease-out both;
+}
+
+.animate-fade-in {
+  animation: fade-up 0.35s ease-out both;
 }

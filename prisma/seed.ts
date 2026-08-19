@@ -9,14 +9,21 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   const manga = await prisma.manga.upsert({
-    where: { slug: "demo-truyen-18" },
-    update: {},
+    where: { slug: "demo-xa-dong" },
+    update: {
+      title: "Demo Xà Động",
+      description:
+        "Bản demo cho blog Xà Động. Chap 1 mở sẵn; chap 2 khóa mật khẩu (SHOPDEMO) để thử luồng chống quét.",
+      isNsfw: false,
+      coverImage: "https://picsum.photos/seed/xadong/600/800",
+    },
     create: {
-      title: "Demo Truyện 18+",
-      slug: "demo-truyen-18",
-      coverImage: "https://img.example.com/covers/demo.jpg",
-      description: "Truyện demo để kiểm tra schema & unlock flow.",
-      isNsfw: true,
+      title: "Demo Xà Động",
+      slug: "demo-xa-dong",
+      coverImage: "https://picsum.photos/seed/xadong/600/800",
+      description:
+        "Bản demo cho blog Xà Động. Chap 1 mở sẵn; chap 2 khóa mật khẩu (SHOPDEMO) để thử luồng chống quét.",
+      isNsfw: false,
       chapters: {
         create: [
           {
@@ -28,11 +35,11 @@ async function main() {
               create: [
                 {
                   orderIndex: 1,
-                  imageUrl: "https://img.example.com/demo/ch1/01.webp",
+                  imageUrl: "https://picsum.photos/seed/xadong-c1-1/800/1200",
                 },
                 {
                   orderIndex: 2,
-                  imageUrl: "https://img.example.com/demo/ch1/02.webp",
+                  imageUrl: "https://picsum.photos/seed/xadong-c1-2/800/1200",
                 },
               ],
             },
@@ -46,7 +53,11 @@ async function main() {
               create: [
                 {
                   orderIndex: 1,
-                  imageUrl: "https://img.example.com/demo/ch2/01.webp",
+                  imageUrl: "https://picsum.photos/seed/xadong-c2-1/800/1200",
+                },
+                {
+                  orderIndex: 2,
+                  imageUrl: "https://picsum.photos/seed/xadong-c2-2/800/1200",
                 },
               ],
             },

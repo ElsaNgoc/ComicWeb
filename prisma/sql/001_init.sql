@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS mangas (
   slug        VARCHAR(255) NOT NULL UNIQUE,
   cover_image TEXT NOT NULL,
   description TEXT,
-  is_nsfw     BOOLEAN NOT NULL DEFAULT TRUE,
+  is_nsfw     BOOLEAN NOT NULL DEFAULT FALSE,
   created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
